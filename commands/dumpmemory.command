@@ -30,7 +30,7 @@ exports.help = (config, command, message) => {
 // Command logic:
 exports.call = (args, info) => {
 
-	if(info.message.author.id === "102843234706804736") {
+	if(info.core.isByStaffMember(info.message)) {
 
 		return info.core.commandSwitch(args, {
 			temp: args => {
@@ -55,6 +55,11 @@ exports.call = (args, info) => {
 			}
 		});
 
+	}
+
+	// If unauthorized.
+	else {
+		return "You are not authorized to do this."
 	}
 }
 

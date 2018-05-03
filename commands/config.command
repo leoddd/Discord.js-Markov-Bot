@@ -37,8 +37,9 @@ exports.call = (args, info) => {
 		return "You can't change settings in DMs! What would that even do!";
 	}
 
-	if(!info.config.allow_hooks === true) {
-		return;
+	// Only allow staff members to mess with and view settings.
+	if(!info.core.isByStaffMember(info.message)) {
+		return "You are not authorized to do this.";
 	}
 
 
@@ -53,6 +54,20 @@ exports.call = (args, info) => {
 		"ignore_bots": {
 			"help": "Whether I should ignore other bots' messages or not. This might lead to trouble!",
 			"legal": value => {return value === "true" || value === "false"},
+		},
+
+
+		"use_hierarchy": {
+			"help": "Whether I should care about whether or not someone is a staff member for critical commands \
+							\nI'll use the \`staff_perms\` setting to figure out who meets this.",
+			"legal": value => {return value === "true" || value === "false"},
+		},
+
+
+		"staff_perms": {
+			"help": "The permission value that a user needs to fulfill in order to be considered a server staff member. \
+							\nCalculate: \`https://finitereality.github.io/permissions-calculator\`",
+			"legal": value => {return (!isNaN(value)) && parseInt(value, 10) >= 0},
 		},
 
 
@@ -192,7 +207,7 @@ exports.call = (args, info) => {
 				if(available_settings.hasOwnProperty(target_setting)) {
 					var help_string = available_settings[target_setting].help;
 
-					return `\`${target_setting}\`: **${info.config[target_setting]}**\n*${help_string}*`;
+					return `\`${target_setting}\`: **${info.config[target_setting]}**\n${help_string}`;
 
 				} else {
 					return `\`${target_setting}\` is not an available setting.`;
@@ -204,7 +219,7 @@ exports.call = (args, info) => {
 		},
 
 		default: function (args) {
-			return this.show();
+			return this.list();
 		},
 
 	});

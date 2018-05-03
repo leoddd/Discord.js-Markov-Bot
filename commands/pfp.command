@@ -31,6 +31,12 @@ exports.help = (config, command, message) => {
 const isUrl = require('is-url-superb');
 
 exports.call = (args, info) => {
+
+	// If not by staff member, quit out.
+	if(!info.core.isByStaffMember(info.message)) {
+		return "You are not authorized to do this.";
+	}
+	
 	var result = false;
 
 	if(args.length !== 0) {

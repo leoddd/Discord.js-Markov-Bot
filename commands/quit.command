@@ -30,7 +30,7 @@ exports.help = (config, command, message) => {
 // Command logic:
 exports.call = (args, info) => {
 
-	if(info.core.isBotAdmin(info.message)) {
+	if(info.core.isByBotAdmin(info.message)) {
 		return {"signals": ["quit"], "msg": "Aight, bye."};
 	} else {
 		return "Nice try, dickhead.";

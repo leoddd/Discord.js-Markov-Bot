@@ -2,6 +2,9 @@
 	"prefix": "m!",
 	"ignore_bots": false,
 
+	"use_hierarchy": false,
+	"staff_perms": 8326,
+
 	"random_markov": true,
 	"markov_min_messages": 7,
 	"markov_chance": 3,

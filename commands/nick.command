@@ -30,6 +30,11 @@ exports.help = (config, command, message) => {
 // Command logic:
 exports.call = (args, info) => {
 
+	// If not by staff member, quit out.
+	if(!info.core.isByStaffMember(info.message)) {
+		return "You are not authorized to do this.";
+	}
+
 	// No response in DMs.
 	if(!info.message.guild) {
 		return "Not even I can set a nickname in a DM, big girl.";

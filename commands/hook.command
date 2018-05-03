@@ -33,6 +33,11 @@ var escapeRegex = require('escape-string-regexp');
 
 exports.call = (args, info) => {
 
+	// If not by staff member, quit out.
+	if(!info.core.isByStaffMember(info.message)) {
+		return "You are not authorized to do this.";
+	}
+
 	return info.core.commandSwitch(args, {
 
 		add: args => {

@@ -9,6 +9,9 @@
 //  prefix: The prefix needed to activate the bots' command. If it's set to "m!", then a message has to start with "m!" to activate the bot.
 //  ignore_bots: If this is true, the bot will never respond to other bots. If false, it will (but not itself).
 //
+//  use_hierarchy: If this is true, then only staff members can use critical commands that may affect the bot. Uses the setting below to determine who is.
+//  staff_perms: The permission level a user needs to be considered "staff" by the bot. Calculate: https://finitereality.github.io/permissions-calculator
+//
 //  random_markov: If true, the bot will, at random, use the 'markov' command using peoples' messages, without a prefix.
 //  markov_min_messages: How many messages need to be between each random markov command, if enabled.
 //  markov_chance:  The chance, in percent, of triggering a markov response.
@@ -175,7 +178,8 @@ function init() {
 	core.makeGuildDir = makeGuildDir;
 	core.deleteGuildData = deleteGuildData;
 
-	core.isBotAdmin = isBotAdmin;
+	core.isByBotAdmin = isByBotAdmin;
+	core.isByStaffMember = isByStaffMember;
 	core.getCurrentName = getCurrentName;
 	core.getNewID = getNewID;
 
@@ -1234,10 +1238,17 @@ function commandBundle(args, dictionary) {
 }
 
 
-// Checks if the message was sent by someone who is a bot administrator.
-function isBotAdmin(message) {
+// Checks if the message was sent by the bot owner, used for commands that affect many guilds, such as quitting.
+function isByBotAdmin(message) {
 	// Check if it's the owner's ID.
 	return message.author.id === config.owner_id ? true : false;
+}
+
+// Checks if the message was sent by a staff member on the server.
+function isByStaffMember(message) {
+	// Check if the author fulfills the guild-specific staff requirement.
+	var guild_config = getGuildConfig(message.guild);
+	return !guild_config.use_hierarchy || message.member.permissions.has(guild_config.staff_perms);
 }
 
 // Returns a RichEmbed object.

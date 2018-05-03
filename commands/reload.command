@@ -30,6 +30,11 @@ exports.help = (config, command, message) => {
 // Command logic:
 exports.call = (args, info) => {
 
+	// If not by staff member, quit out.
+	if(!info.core.isByStaffMember(info.message)) {
+		return "You are not authorized to do this.";
+	}
+
 	var signals = [];
 	var reload_string = "";
 
@@ -50,7 +55,7 @@ exports.call = (args, info) => {
 		},
 
 		commands: () => {
-			if(info.core.isBotAdmin(info.message)) {
+			if(info.core.isByBotAdmin(info.message)) {
 				signals.push("reload");
 
 				reload_string = list(reload_string, "commands");
@@ -58,7 +63,7 @@ exports.call = (args, info) => {
 		},
 
 		all: () => {
-			if(info.core.isBotAdmin(info.message)) {
+			if(info.core.isByBotAdmin(info.message)) {
 				signals = ["reset"];
 				
 				reload_string = list(reload_string, "the connection");
