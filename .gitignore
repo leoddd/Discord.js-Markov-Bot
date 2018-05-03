@@ -35,3 +35,6 @@ todo
 # Data directories
 guild_data
 global_data
+
+# Heroku command file
+Procfile
