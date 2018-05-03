@@ -20,6 +20,7 @@
     "human-interval": "^0.1.6",
     "human-readable-time": "^0.3.0",
     "is-url-superb": "^2.0.0",
+    "long-timeout": "^0.1.1",
     "markov": "0.0.7",
     "node-cleanup": "^2.1.2",
     "random-floating": "^1.0.1",

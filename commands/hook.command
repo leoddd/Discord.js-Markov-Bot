@@ -14,8 +14,21 @@
 //     config: The config object.
 //     core: A subset of bot_core to expose some functions to commands. Is eventEmitter, look at its definition in init() for functions.
 //           Pay special attention to the command* helper functions.
+//
+// Additionally, exports a 'help' function that is to return a help string about how to use the command. It receives the following:
+// 	 config: The config object. Useful for prefixes or to check if a functionality is enabled.
+//   command: The name of the command being asked for help on.
+//   message: Discord.js's Message object. Represents the message that asked for help.
 /////
 
+// Help function:
+exports.help = (config, command, message) => {
+	return `Make me respond to certain message texts with certain commands. You can \`list\` current hooks, \`add\` a new hook or \`clear\` and existing hook using its string ID given in the \`list\`. \
+					\nUsage: \`${config.prefix}${command} [add|clear|list] [string|regex] [command]\` \
+					\nExamples: \`${config.prefix}${command} list\`, \`${config.prefix}${command} add ping say pong\`, \`${config.prefix}${command} clear ping\`, \`${config.prefix}${command} add /{(.*?)}/g ygo.\``;
+}
+
+// Command logic:
 var escapeRegex = require('escape-string-regexp');
 
 exports.call = (args, info) => {

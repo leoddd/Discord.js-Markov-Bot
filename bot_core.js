@@ -92,6 +92,7 @@ const merge = require('deepmerge');
 const randRange = require('random-floating');
 const events = require('events');
 const toHumanTime = require('human-readable-time');
+const longTimeout = require('long-timeout');
 
 /////////////
 // Constants.
@@ -166,6 +167,8 @@ function init() {
 	core.log = log;
 	core.callCommand = callCommand;
 	core.callFuncAsCommand = callFuncAsCommand;
+	core.hasCommand = hasCommand;
+	core.getHelpString = getHelpString;
 
 	core.feedMarkov = feedMarkov;
 	core.makeEmbed = makeEmbed;
@@ -174,7 +177,6 @@ function init() {
 
 	core.isBotAdmin = isBotAdmin;
 	core.getCurrentName = getCurrentName;
-	core.hasCommand = hasCommand;
 	core.getNewID = getNewID;
 
 	core.msToInterval = msToInterval;
@@ -388,14 +390,13 @@ function hookUpBot() {
 
 
 // Calls a command of the given name with the given arguments (array), operating using the given message object.
-function callCommand(command, args, message) {
+function callCommand(command, args, message, is_hook) {
 
 	// Start showing the typing indicator.
 	//message.channel.startTyping();
 
 	if(!commands.hasOwnProperty(command)) {
 		// If the command does not exist, return false.
-		log(`Command ${command} does not exist. Attempted by ${message.author.tag}.`, "response");
 		message.channel.send("What did you just fracking say to my face matey?");
 		return false;
 
@@ -406,7 +407,7 @@ function callCommand(command, args, message) {
 		var args_string = args.join(" ");
 
 		try {
-			var response = commands[command](args, {"memory": memory, "temp": temp, "message": message, "bot": bot, "config": guild_config, "core": core, "command": command});
+			var response = commands[command].call(args, {"memory": memory, "temp": temp, "message": message, "bot": bot, "config": guild_config, "core": core, "command": command, "hook": is_hook});
 			handleCommandResponse(response, message);
 		} catch(err) {
 			handleCommandResponse({
@@ -512,12 +513,30 @@ function reloadCommand(path) {
 
 	// See if we can actually call this module.
 	if('call' in command_file && typeof command_file.call === 'function') {
-		commands[command_name] = command_file.call;
+		commands[command_name] = command_file;
 		log(`Added command ${path} as ${command_name}.`, "commands");
 	} else {
 		log(`Could not add command ${path}, no exported 'call' function.`, "commands");
 	}
 }
+
+
+// Returns the help string associated with a given command file.
+// If the command isn't found or has no help string, returns undefined.
+function getHelpString(command, message) {
+	var cur_command = commands[command];
+
+	// If the help property exists and is a string, return it.
+	if(cur_command && cur_command.hasOwnProperty("help") && typeof(cur_command.help) === 'function') {
+		return cur_command.help(getGuildConfig(message.guild), command, message);
+	}
+
+	// Else, return nothing.
+	else {
+		return;
+	}
+}
+
 
 
 // Handles core signals returned by functions.
@@ -715,7 +734,7 @@ function setPersistentTimeout(func_descriptor, in_ms) {
 function clearPersistentTimeout(time_key) {
 	// Clear this session's revived temp timeout.
 	if(temp.timeouts.hasOwnProperty(time_key)) {
-		clearTimeout(temp.timeouts[time_key]);
+		longTimeout.clearTimeout(temp.timeouts[time_key]);
 		delete temp.timeouts[time_key];
 	}
 
@@ -760,7 +779,7 @@ function revivePersistentTimeout(time_key) {
 					// If the descriptor has a message attached, convert it back from the ID pair to a message object.
 					bot.channels.get(func_descriptor.message.channel).fetchMessage(func_descriptor.message.message)
 						.then(message => {
-							callCommand(func_descriptor.name, func_descriptor.args, message);
+							callCommand(func_descriptor.name, func_descriptor.args, message, true);
 						})
 						.catch(err => {
 							log(`Could not fetch message ${func_descriptor.message.message} in channel ${func_descriptor.message.channel}, timeout ${time_key} failed. Error: "${err}".`, "timers")
@@ -798,7 +817,7 @@ function revivePersistentTimeout(time_key) {
 
 	// If time for timeout hasn't happened yet, set the timeout properly!
 	else {
-		temp.timeouts[time_key] = setTimeout(func_to_call, time_until);
+		temp.timeouts[time_key] = longTimeout.setTimeout(func_to_call, time_until);
 	}
 
 }
@@ -1221,14 +1240,14 @@ function isBotAdmin(message) {
 	return message.author.id === config.owner_id ? true : false;
 }
 
-// Returns whether a command of the given name exists.
-function hasCommand(name) {
-	return commands.hasOwnProperty(name);
-}
-
 // Returns a RichEmbed object.
 function makeEmbed() {
 	return new Discord.RichEmbed();
+}
+
+// Returns whether a command of the given name exists.
+function hasCommand(name) {
+	return commands.hasOwnProperty(name);
 }
 
 

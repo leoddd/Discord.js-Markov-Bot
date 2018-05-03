@@ -13,7 +13,7 @@
 	"max_hooks_per_message": 6,
 
 	"save_interval": 300000,
-	"guild_data_timeout_hours": 24,
+	"guild_data_timeout_hours": 48,
 
 	"command_dir": "./commands/",
 	"global_dir": "./global_data/",
