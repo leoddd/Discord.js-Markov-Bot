@@ -1,0 +1,1 @@
+worker: npm bot_core.js
