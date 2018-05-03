@@ -1,0 +1,28 @@
+{
+	"prefix": "m!",
+	"ignore_bots": false,
+
+	"random_markov": true,
+	"markov_min_messages": 7,
+	"markov_chance": 3,
+	"markov_chance_increase": 0.1,
+	"markov_max_length": 600,
+	"markov_default_max_words": 45,
+
+	"allow_hooks": true,
+	"max_hooks_per_message": 6,
+
+	"save_interval": 300000,
+	"guild_data_timeout_hours": 24,
+
+	"command_dir": "./commands/",
+	"global_dir": "./global_data/",
+	"guilds_dir": "./guild_data/",
+	"memory_file": "memory.json",
+	"markov_file": "markov.dat",
+	"base_markov_data": "./config/base_markov.dat",
+
+	"invite_link": "https://discordapp.com/oauth2/authorize?client_id=437374963448676352&scope=bot",
+	"token": "NDM3Mzc0OTYzNDQ4Njc2MzUy.Db1JIw.sseHw3b8I0pDoYIL8avf46ax5OQ",
+	"owner_id": "102843234706804736"
+}

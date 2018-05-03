@@ -1,0 +1,17 @@
+message regex hooks (its own nickname, [card name] for ygo cards etc.)
+
+add y/n interjecting
+add nickname aliases
+add markov blacklisting
+
+m!do list and m!do not do ID
+
+
+dont forget to repair abby not randomly doing things now cause of the mismatched if else
+
+
+m!dos over a long period of time dont work -- maybe the 2018 hack breaks it
+
+
+
+
